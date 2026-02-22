@@ -1,0 +1,480 @@
+/* ============================================
+   PERFORMANCE & ACCESSIBILITY OPTIMIZATIONS
+   GPU-accelerated animations, reduced motion, and accessibility
+   ============================================ */
+
+/* GPU Acceleration Base */
+.btn,
+.add-to-cart-button,
+.submit-button,
+.checkout-button,
+.close-button,
+.password-toggle,
+.admin-btn,
+.pc__add-btn {
+  /* Force GPU acceleration for smooth animations */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform, box-shadow, opacity;
+  
+  /* Optimize for compositing */
+  contain: layout style paint;
+}
+
+/* Reduce will-change after animation completes */
+.btn:not(:hover):not(:active),
+.add-to-cart-button:not(:hover):not(:active),
+.submit-button:not(:hover):not(:active),
+.checkout-button:not(:hover):not(:active),
+.close-button:not(:hover):not(:active),
+.password-toggle:not(:hover):not(:active),
+.admin-btn:not(:hover):not(:active),
+.pc__add-btn:not(:hover):not(:active) {
+  will-change: auto;
+}
+
+/* Optimize for low-end devices */
+@media (max-width: 768px) and (max-height: 1024px) {
+  .btn,
+  .add-to-cart-button,
+  .submit-button,
+  .checkout-button,
+  .close-button,
+  .password-toggle,
+  .admin-btn,
+  .pc__add-btn {
+    /* Reduce animation complexity on mobile */
+    transition: transform var(--duration-fast) linear,
+                box-shadow var(--duration-fast) linear;
+  }
+  
+  .btn::before,
+  .add-to-cart-button::before,
+  .submit-button::before,
+  .checkout-button::before,
+  .admin-btn::before,
+  .pc__add-btn::before {
+    /* Disable shine effect on low-end devices */
+    display: none;
+  }
+}
+
+/* Battery optimization */
+@media (prefers-reduced-data: reduce) {
+  .btn::before,
+  .add-to-cart-button::before,
+  .submit-button::before,
+  .checkout-button::before,
+  .admin-btn::before,
+  .pc__add-btn::before {
+    display: none;
+  }
+}
+
+/* High DPI optimization */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .btn,
+  .add-to-cart-button,
+  .submit-button,
+  .checkout-button,
+  .close-button,
+  .password-toggle,
+  .admin-btn,
+  .pc__add-btn {
+    /* Sharper rendering on high DPI displays */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+/* Print optimization */
+@media print {
+  .btn,
+  .add-to-cart-button,
+  .submit-button,
+  .checkout-button,
+  .close-button,
+  .password-toggle,
+  .admin-btn,
+  .pc__add-btn {
+    /* Remove all animations and effects for printing */
+    transition: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+    background: white !important;
+    color: black !important;
+    border: 1px solid black !important;
+  }
+  
+  .btn::before,
+  .add-to-cart-button::before,
+  .submit-button::before,
+  .checkout-button::before,
+  .admin-btn::before,
+  .pc__add-btn::before {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================ */
+
+/* Focus management */
+.focus-visible {
+  outline: 2px solid #3182ce;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Skip links */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #3182ce;
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 1000;
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Not screen reader only */
+.not-sr-only {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .btn:hover,
+  .btn:active,
+  .add-to-cart-button:hover,
+  .add-to-cart-button:active,
+  .submit-button:hover,
+  .submit-button:active,
+  .checkout-button:hover,
+  .checkout-button:active,
+  .close-button:hover,
+  .close-button:active,
+  .password-toggle:hover,
+  .password-toggle:active,
+  .admin-btn:hover,
+  .admin-btn:active,
+  .pc__add-btn:hover,
+  .pc__add-btn:active {
+    transform: none !important;
+  }
+  
+  .btn::before,
+  .add-to-cart-button::before,
+  .submit-button::before,
+  .checkout-button::before,
+  .admin-btn::before,
+  .pc__add-btn::before {
+    display: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .btn,
+  .add-to-cart-button,
+  .submit-button,
+  .checkout-button,
+  .close-button,
+  .password-toggle,
+  .admin-btn,
+  .pc__add-btn {
+    border: 2px solid currentColor;
+  }
+  
+  .btn:focus-visible,
+  .add-to-cart-button:focus-visible,
+  .submit-button:focus-visible,
+  .checkout-button:focus-visible,
+  .close-button:focus-visible,
+  .password-toggle:focus-visible,
+  .admin-btn:focus-visible,
+  .pc__add-btn:focus-visible {
+    outline: 3px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
+/* Color scheme support */
+@media (prefers-color-scheme: dark) {
+  .skip-link {
+    background: #4a5568;
+    color: white;
+  }
+  
+  .focus-visible {
+    outline-color: #63b3ed;
+  }
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+
+/* Content visibility for better rendering */
+.main-content {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+.sidebar {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Lazy loading placeholder */
+.lazy-load {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.lazy-load.loaded {
+  background: none;
+  animation: none;
+}
+
+/* Image optimization */
+.responsive-image {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+@media (min-resolution: 2dppx) {
+  .responsive-image {
+    image-rendering: auto;
+  }
+}
+
+/* Scroll performance */
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smooth-scroll {
+    scroll-behavior: auto;
+  }
+}
+
+/* Intersection observer optimizations */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Font loading optimization */
+.font-loading {
+  font-display: swap;
+}
+
+/* Critical CSS inlining hint */
+.critical-above-fold {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1000px;
+}
+
+/* Non-critical content lazy loading */
+.non-critical {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 1000px;
+}
+
+/* Memory optimization */
+.memory-efficient {
+  will-change: auto;
+  transform: translateZ(0);
+}
+
+.memory-efficient:hover {
+  will-change: transform;
+}
+
+.memory-efficient:not(:hover) {
+  will-change: auto;
+}
+
+/* Network optimization */
+@media (prefers-reduced-data: reduce) {
+  .lazy-load,
+  .fade-in {
+    animation: none;
+    transition: none;
+  }
+  
+  img {
+    image-rendering: auto;
+  }
+  
+  video {
+    display: none;
+  }
+  
+  .video-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f0f0;
+    color: #666;
+    padding: 2rem;
+    border-radius: 8px;
+  }
+}
+
+/* Touch optimization */
+@media (pointer: coarse) {
+  .btn,
+  .add-to-cart-button,
+  .submit-button,
+  .checkout-button,
+  .close-button,
+  .password-toggle,
+  .admin-btn,
+  .pc__add-btn {
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
+  }
+  
+  .btn:hover,
+  .add-to-cart-button:hover,
+  .submit-button:hover,
+  .checkout-button:hover,
+  .close-button:hover,
+  .password-toggle:hover,
+  .admin-btn:hover,
+  .pc__add-btn:hover {
+    transform: none;
+  }
+  
+  .btn:active,
+  .add-to-cart-button:active,
+  .submit-button:active,
+  .checkout-button:active,
+  .close-button:active,
+  .password-toggle:active,
+  .admin-btn:active,
+  .pc__add-btn:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Keyboard navigation enhancement */
+.keyboard-nav *:focus {
+  outline: 2px solid #3182ce;
+  outline-offset: 2px;
+}
+
+/* ARIA support */
+[aria-hidden="true"] {
+  display: none;
+}
+
+[aria-disabled="true"] {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+[aria-expanded="false"] .expand-icon {
+  transform: rotate(0deg);
+}
+
+[aria-expanded="true"] .expand-icon {
+  transform: rotate(180deg);
+}
+
+/* Role-based styling */
+[role="button"] {
+  cursor: pointer;
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: #f8f9fa;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+[role="button"]:hover {
+  background: #e9ecef;
+  border-color: #dee2e6;
+}
+
+[role="button"]:focus {
+  outline: 2px solid #3182ce;
+  outline-offset: 2px;
+}
+
+[role="button"]:disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed;
+}

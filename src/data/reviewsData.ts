@@ -1,0 +1,78 @@
+// src/data/reviewsData.ts
+
+import { Review } from '../types/review.types';
+
+export const reviewsData: Review[] = [
+  {
+    id: 'rev-001',
+    productId: 'prod-001',
+    userName: 'أحمد محمد',
+    rating: 5,
+    comment: 'سيارة رائعة جداً! ابني يحبها كثيراً والبطارية تدوم طويلاً. جودة ممتازة وسعر مناسب.',
+    date: '2024-01-15',
+    verified: true,
+  },
+  {
+    id: 'rev-002',
+    productId: 'prod-001',
+    userName: 'فاطمة علي',
+    rating: 4,
+    comment: 'منتج جيد ولكن التوصيل كان متأخراً قليلاً. السيارة نفسها ممتازة والأطفال سعداء بها.',
+    date: '2024-01-10',
+    verified: true,
+  },
+  {
+    id: 'rev-003',
+    productId: 'prod-001',
+    userName: 'خالد سعيد',
+    rating: 5,
+    comment: 'أفضل لعبة اشتريتها لأطفالي! السرعة ممتازة والتحكم سهل جداً.',
+    date: '2024-01-05',
+    verified: false,
+  },
+  {
+    id: 'rev-004',
+    productId: 'prod-002',
+    userName: 'نورة عبدالله',
+    rating: 5,
+    comment: 'بالون جميل جداً وألوانه زاهية. استخدمته في حفلة ابنتي وكان رائعاً.',
+    date: '2024-01-12',
+    verified: true,
+  },
+  {
+    id: 'rev-005',
+    productId: 'prod-002',
+    userName: 'سارة أحمد',
+    rating: 4,
+    comment: 'جودة جيدة وبقي منتفخاً لأكثر من أسبوع. أنصح به للحفلات.',
+    date: '2024-01-08',
+    verified: true,
+  },
+  {
+    id: 'rev-006',
+    productId: 'prod-003',
+    userName: 'محمد حسن',
+    rating: 5,
+    comment: 'ديناصور رائع! الأصوات واقعية جداً وابني لا يتوقف عن اللعب به.',
+    date: '2024-01-14',
+    verified: true,
+  },
+  {
+    id: 'rev-007',
+    productId: 'prod-003',
+    userName: 'ليلى يوسف',
+    rating: 5,
+    comment: 'جودة ممتازة وتفاصيل دقيقة. يستحق السعر تماماً.',
+    date: '2024-01-09',
+    verified: true,
+  },
+  {
+    id: 'rev-008',
+    productId: 'prod-004',
+    userName: 'عمر إبراهيم',
+    rating: 4,
+    comment: 'صاروخ جميل والأضواء رائعة. الأطفال يحبونه كثيراً.',
+    date: '2024-01-11',
+    verified: false,
+  },
+];

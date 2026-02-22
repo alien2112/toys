@@ -1,0 +1,437 @@
+/* ============================================================
+   ProductDetailPage.css – Premium Modern Redesign
+   Apple-level design with conversion-focused UI/UX
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ── CSS Variables ───────────────────────── */
+:root {
+  /* Brand Colors - Consistent with ProductsPage */
+  --brand-primary: #2563eb;
+  --brand-primary-dark: #1d4ed8;
+  --brand-primary-light: #3b82f6;
+  --brand-accent: #f59e0b;
+  --brand-accent-dark: #d97706;
+  
+  /* Neutral Palette - Sophisticated */
+  --surface-0: #ffffff;
+  --surface-50: #f8fafc;
+  --surface-100: #f1f5f9;
+  --surface-200: #e2e8f0;
+  --surface-300: #cbd5e1;
+  --surface-400: #94a3b8;
+  
+  /* Text Hierarchy */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #64748b;
+  --text-muted: #94a3b8;
+  
+  /* Premium Shadows */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  
+  /* Border Radius - Modern */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
+  --radius-full: 9999px;
+  
+  /* Transitions - Smooth */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Spacing System */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 80px;
+}
+
+/* ── Base Styles ───────────────────────── */
+.pdp-root {
+  direction: rtl;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(to bottom, var(--surface-0) 0%, var(--surface-50) 100%);
+  min-height: 100vh;
+  color: var(--text-primary);
+}
+
+/* ── Page Entrance Animations ──────────────────────────────── */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ── Skeleton Loading - Premium ──────────────────────────────── */
+.pdp-skeleton-block {
+  background: linear-gradient(90deg, var(--surface-200) 25%, var(--surface-300) 50%, var(--surface-200) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md);
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Breadcrumb - Clean ──────────────────────────────── */
+.pdp-crumb {
+  padding: var(--space-lg) 0;
+  border-bottom: 1px solid var(--surface-200);
+  margin-bottom: var(--space-2xl);
+}
+
+.pdp-crumb__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 14px;
+  color: var(--text-tertiary);
+}
+
+.pdp-crumb__inner a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.pdp-crumb__inner a:hover {
+  color: var(--brand-primary);
+}
+
+/* ── Main Layout - Two Column Premium ──────────────────────────────── */
+.pdp-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-lg) var(--space-4xl);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4xl);
+  animation: fadeSlideUp 0.6s ease-out;
+}
+
+/* ── Not Found - Premium Design ──────────────────────────────── */
+.pdp-not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: var(--space-4xl);
+}
+
+.pdp-not-found__icon {
+  color: var(--text-muted);
+  margin-bottom: var(--space-xl);
+  animation: scaleIn 0.5s ease-out;
+}
+
+.pdp-not-found h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-md) 0;
+}
+
+.pdp-not-found p {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-2xl) 0;
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+.pdp-not-found__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-xl);
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
+}
+
+.pdp-not-found__btn:hover {
+  background: linear-gradient(135deg, var(--brand-primary-light) 0%, var(--brand-primary) 100%);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ── Product Gallery Section - Premium ──────────────────────────────── */
+.pdp-gallery-section {
+  animation: fadeIn 0.8s ease-out 0.2s both;
+}
+
+/* ── Product Info Section - Premium ──────────────────────────────── */
+.pdp-info-section {
+  animation: fadeIn 0.8s ease-out 0.4s both;
+}
+
+/* ── Trust Badges - Enhanced ──────────────────────────────── */
+.pdp-trust {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-lg);
+  margin: var(--space-3xl) 0;
+  padding: var(--space-2xl);
+  background: var(--surface-0);
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--surface-200);
+  box-shadow: var(--shadow-sm);
+}
+
+.pdp-trust__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  border-radius: var(--radius-xl);
+  background: var(--surface-50);
+  transition: all var(--transition-base);
+}
+
+.pdp-trust__item:hover {
+  background: var(--surface-100);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.pdp-trust__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%);
+  color: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+.pdp-trust__label {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.pdp-trust__sub {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  line-height: 1.4;
+}
+
+/* ── Tabs - Modern Design ──────────────────────────────── */
+.pdp-tabs {
+  margin: var(--space-4xl) 0;
+  animation: fadeIn 0.8s ease-out 0.6s both;
+}
+
+.pdp-tabs__bar {
+  display: flex;
+  background: var(--surface-100);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-xs);
+  gap: var(--space-xs);
+  margin-bottom: var(--space-2xl);
+  border: 1px solid var(--surface-200);
+}
+
+.pdp-tabs__btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-xl);
+  color: var(--text-tertiary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+.pdp-tabs__btn:hover {
+  color: var(--text-primary);
+  background: var(--surface-200);
+}
+
+.pdp-tabs__btn.active {
+  background: var(--surface-0);
+  color: var(--brand-primary);
+  box-shadow: var(--shadow-sm);
+  font-weight: 600;
+}
+
+.pdp-tabs__btn.active::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%);
+  opacity: 0.1;
+}
+
+/* Tab Content */
+.pdp-tabs__content {
+  background: var(--surface-0);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-2xl);
+  border: 1px solid var(--surface-200);
+  box-shadow: var(--shadow-sm);
+  min-height: 300px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* ── Related Products - Enhanced ──────────────────────────────── */
+.pdp-related {
+  margin: var(--space-4xl) 0;
+  animation: fadeIn 0.8s ease-out 0.8s both;
+}
+
+.pdp-related__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
+}
+
+.pdp-related__title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.pdp-related__title svg {
+  color: var(--brand-accent);
+}
+
+/* ── Responsive Design ──────────────────────────────── */
+@media (max-width: 1024px) {
+  .pdp-main {
+    grid-template-columns: 1fr;
+    gap: var(--space-3xl);
+    padding: 0 var(--space-lg) var(--space-3xl);
+  }
+  
+  .pdp-trust {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+  
+  .pdp-tabs__bar {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .pdp-crumb__inner {
+    padding: 0 var(--space-md);
+  }
+  
+  .pdp-main {
+    padding: 0 var(--space-md) var(--space-2xl);
+  }
+  
+  .pdp-trust {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+  
+  .pdp-trust__item {
+    padding: var(--space-md);
+  }
+  
+  .pdp-tabs__bar {
+    padding: var(--space-xs);
+  }
+  
+  .pdp-tabs__btn {
+    padding: var(--space-sm) var(--space-md);
+    font-size: 13px;
+  }
+  
+  .pdp-tabs__content {
+    padding: var(--space-lg);
+  }
+  
+  .pdp-related__title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pdp-not-found {
+    padding: var(--space-2xl);
+  }
+  
+  .pdp-not-found h1 {
+    font-size: 1.5rem;
+  }
+  
+  .pdp-trust__icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .pdp-trust__label {
+    font-size: 14px;
+  }
+  
+  .pdp-trust__sub {
+    font-size: 12px;
+  }
+}
