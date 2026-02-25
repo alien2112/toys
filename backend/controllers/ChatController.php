@@ -105,6 +105,17 @@ class ChatController {
                 $senderType = 'agent';
             }
         } else {
+            // Anonymous user - check message limit
+            $messageCount = $this->chatModel->getUserMessageCount($sessionId);
+
+            if ($messageCount >= 3) {
+                Response::error('Message limit reached. Please login to continue chatting.', 429, [
+                    'requires_login' => true,
+                    'message_limit' => 3,
+                    'current_count' => $messageCount
+                ]);
+            }
+
             // Guest user - verify by IP
             if ($session['visitor_ip'] !== $_SERVER['REMOTE_ADDR']) {
                 Response::error('Unauthorized', 403);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { TrendingUp, TrendingDown, DollarSign, ShoppingCart, Users, Package, Download, Calendar, BarChart3, PieChart, Activity } from 'lucide-react'
 import { apiService } from '../../services/api'
+import { arabicTranslations } from '../../data/arabicTranslations'
 import './AdminAnalyticsPage.css'
 
 interface KPICard {
@@ -73,7 +74,7 @@ const AdminAnalyticsPage: React.FC = () => {
       const response = await apiService.get<AnalyticsData>(`/admin/analytics/sales?${params}`)
       setData(response)
     } catch (err: any) {
-      setError(err.message || 'Failed to load analytics data')
+      setError(err.message || arabicTranslations.error)
     } finally {
       setLoading(false)
     }
@@ -98,39 +99,39 @@ const AdminAnalyticsPage: React.FC = () => {
   }
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-KW', {
+    return new Intl.NumberFormat('ar-SA', {
       style: 'currency',
-      currency: 'KWD'
+      currency: 'SAR'
     }).format(amount)
   }
 
   const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('en-KW').format(num)
+    return new Intl.NumberFormat('ar-SA').format(num)
   }
 
   const kpiCards: KPICard[] = data ? [
     {
-      title: 'Total Revenue',
+      title: arabicTranslations.totalRevenueAnalytics,
       value: formatCurrency(data.kpis.total_revenue),
       change: data.kpis.revenue_growth,
       icon: <DollarSign className="w-5 h-5" />,
       color: 'green'
     },
     {
-      title: 'Total Orders',
+      title: arabicTranslations.totalOrdersAnalytics,
       value: formatNumber(data.kpis.total_orders),
       change: data.kpis.orders_growth,
       icon: <ShoppingCart className="w-5 h-5" />,
       color: 'blue'
     },
     {
-      title: 'Customers',
+      title: arabicTranslations.customers,
       value: formatNumber(data.kpis.total_customers),
       icon: <Users className="w-5 h-5" />,
       color: 'purple'
     },
     {
-      title: 'Avg Order Value',
+      title: arabicTranslations.avgOrderValue,
       value: formatCurrency(data.kpis.avg_order_value),
       icon: <Package className="w-5 h-5" />,
       color: 'orange'
@@ -141,10 +142,10 @@ const AdminAnalyticsPage: React.FC = () => {
     return (
       <div className="admin-analytics-page">
         <div className="analytics-header">
-          <h1>Analytics Dashboard</h1>
+          <h1>{arabicTranslations.analyticsDashboard}</h1>
           <div className="analytics-loading">
             <div className="loading-spinner"></div>
-            <span>Loading analytics data...</span>
+            <span>{arabicTranslations.loadingAnalyticsData}</span>
           </div>
         </div>
       </div>
@@ -155,10 +156,10 @@ const AdminAnalyticsPage: React.FC = () => {
     return (
       <div className="admin-analytics-page">
         <div className="analytics-header">
-          <h1>Analytics Dashboard</h1>
+          <h1>{arabicTranslations.analyticsDashboard}</h1>
           <div className="analytics-error">
             <span>{error}</span>
-            <button onClick={fetchAnalytics} className="retry-btn">Retry</button>
+            <button onClick={fetchAnalytics} className="retry-btn">{arabicTranslations.retry}</button>
           </div>
         </div>
       </div>
@@ -166,12 +167,12 @@ const AdminAnalyticsPage: React.FC = () => {
   }
 
   return (
-    <div className="admin-analytics-page">
+      <div className="admin-analytics-page">
       {/* Header */}
       <div className="analytics-header">
         <div className="header-left">
-          <h1>Analytics Dashboard</h1>
-          <p>Track your business performance and customer insights</p>
+          <h1>{arabicTranslations.analyticsDashboard}</h1>
+          <p>{arabicTranslations.trackBusinessPerformance}</p>
         </div>
         <div className="header-actions">
           <div className="date-range-selector">
@@ -182,7 +183,7 @@ const AdminAnalyticsPage: React.FC = () => {
               onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
               className="date-input"
             />
-            <span>to</span>
+            <span>{arabicTranslations.to}</span>
             <input
               type="date"
               value={dateRange.end}
@@ -196,14 +197,14 @@ const AdminAnalyticsPage: React.FC = () => {
               className="export-btn"
             >
               <Download className="w-4 h-4" />
-              Export Sales
+              {arabicTranslations.exportSales}
             </button>
             <button 
               onClick={() => handleExport('products')}
               className="export-btn"
             >
               <Download className="w-4 h-4" />
-              Export Products
+              {arabicTranslations.exportProducts}
             </button>
           </div>
         </div>
@@ -239,7 +240,7 @@ const AdminAnalyticsPage: React.FC = () => {
           <div className="chart-header">
             <h3>
               <BarChart3 className="w-5 h-5" />
-              Revenue Over Time
+              {arabicTranslations.revenueOverTime}
             </h3>
           </div>
           <div className="chart-content">
@@ -255,13 +256,13 @@ const AdminAnalyticsPage: React.FC = () => {
                     />
                     <div className="chart-label">
                       <div className="chart-value">{formatCurrency(day.revenue)}</div>
-                      <div className="chart-date">{new Date(day.date).toLocaleDateString('en-KW', { month: 'short', day: 'numeric' })}</div>
+                      <div className="chart-date">{new Date(day.date).toLocaleDateString('ar-SA', { month: 'short', day: 'numeric' })}</div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="no-data">No data available</div>
+              <div className="no-data">{arabicTranslations.noDataAvailable}</div>
             )}
           </div>
         </div>
@@ -271,7 +272,7 @@ const AdminAnalyticsPage: React.FC = () => {
           <div className="chart-header">
             <h3>
               <PieChart className="w-5 h-5" />
-              Sales by Category
+              {arabicTranslations.salesByCategory}
             </h3>
           </div>
           <div className="chart-content">
@@ -301,7 +302,7 @@ const AdminAnalyticsPage: React.FC = () => {
                 })}
               </div>
             ) : (
-              <div className="no-data">No data available</div>
+              <div className="no-data">{arabicTranslations.noDataAvailable}</div>
             )}
           </div>
         </div>
@@ -314,7 +315,7 @@ const AdminAnalyticsPage: React.FC = () => {
           <div className="table-header">
             <h3>
               <Activity className="w-5 h-5" />
-              Top Selling Products
+              {arabicTranslations.topSellingProducts}
             </h3>
           </div>
           <div className="table-content">
@@ -322,9 +323,9 @@ const AdminAnalyticsPage: React.FC = () => {
               <table className="analytics-table">
                 <thead>
                   <tr>
-                    <th>Product</th>
-                    <th>Units Sold</th>
-                    <th>Revenue</th>
+                    <th>{arabicTranslations.product}</th>
+                    <th>{arabicTranslations.unitsSold}</th>
+                    <th>{arabicTranslations.revenue}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -338,7 +339,7 @@ const AdminAnalyticsPage: React.FC = () => {
                 </tbody>
               </table>
             ) : (
-              <div className="no-data">No data available</div>
+              <div className="no-data">{arabicTranslations.noDataAvailable}</div>
             )}
           </div>
         </div>
@@ -348,7 +349,7 @@ const AdminAnalyticsPage: React.FC = () => {
           <div className="table-header">
             <h3>
               <DollarSign className="w-5 h-5" />
-              Payment Methods
+              {arabicTranslations.paymentMethods}
             </h3>
           </div>
           <div className="table-content">
@@ -356,9 +357,9 @@ const AdminAnalyticsPage: React.FC = () => {
               <table className="analytics-table">
                 <thead>
                   <tr>
-                    <th>Method</th>
-                    <th>Orders</th>
-                    <th>Revenue</th>
+                    <th>{arabicTranslations.method}</th>
+                    <th>{arabicTranslations.orders}</th>
+                    <th>{arabicTranslations.revenue}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -366,7 +367,7 @@ const AdminAnalyticsPage: React.FC = () => {
                     <tr key={index}>
                       <td className="payment-method">
                         <span className="method-badge">
-                          {method.payment_method === 'cash_on_delivery' ? 'Cash on Delivery' : method.payment_method}
+                          {method.payment_method === 'cash_on_delivery' ? arabicTranslations.cashOnDelivery : method.payment_method}
                         </span>
                       </td>
                       <td>{formatNumber(method.count)}</td>
@@ -376,7 +377,7 @@ const AdminAnalyticsPage: React.FC = () => {
                 </tbody>
               </table>
             ) : (
-              <div className="no-data">No data available</div>
+              <div className="no-data">{arabicTranslations.noDataAvailable}</div>
             )}
           </div>
         </div>
@@ -389,28 +390,28 @@ const AdminAnalyticsPage: React.FC = () => {
           className="action-btn"
         >
           <Activity className="w-4 h-4" />
-          Update Summaries
+          {arabicTranslations.updateSummaries}
         </button>
         <button 
           onClick={() => window.open('/admin/analytics/customer-behavior', '_blank')}
           className="action-btn"
         >
           <Users className="w-4 h-4" />
-          Customer Behavior
+          {arabicTranslations.customerBehavior}
         </button>
         <button 
           onClick={() => window.open('/admin/analytics/inventory', '_blank')}
           className="action-btn"
         >
           <Package className="w-4 h-4" />
-          Inventory Analytics
+          {arabicTranslations.inventoryAnalytics}
         </button>
         <button 
           onClick={() => window.open('/admin/analytics/cro', '_blank')}
           className="action-btn"
         >
           <TrendingUp className="w-4 h-4" />
-          Conversion Insights
+          {arabicTranslations.conversionInsights}
         </button>
       </div>
     </div>

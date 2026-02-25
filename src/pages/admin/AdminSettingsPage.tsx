@@ -45,7 +45,7 @@ const AdminSettingsPage: React.FC = () => {
   const fetchSettings = async () => {
     setLoading(true)
     try {
-      const response = await fetch('http://localhost:8002/api/settings')
+      const response = await fetch('http://localhost:8000/api/settings')
       const data = await response.json()
       
       if (data.success) {
@@ -86,7 +86,7 @@ const AdminSettingsPage: React.FC = () => {
 
     try {
       const token = localStorage.getItem('auth_token')
-      const response = await fetch('http://localhost:8002/api/admin/settings', {
+      const response = await fetch('http://localhost:8000/api/admin/settings', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -120,7 +120,7 @@ const AdminSettingsPage: React.FC = () => {
     
     try {
       const token = localStorage.getItem('auth_token')
-      const response = await fetch('http://localhost:8002/api/upload/logo', {
+      const response = await fetch('http://localhost:8000/api/upload/logo', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

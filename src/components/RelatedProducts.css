@@ -1,0 +1,31 @@
+/* ============================================================
+   RelatedProducts.css – Premium Grid Layout
+   ============================================================ */
+
+.related-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-xl);
+    width: 100%;
+}
+
+@media (max-width: 1024px) {
+    .related-products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: var(--space-lg);
+    }
+}
+
+@media (max-width: 768px) {
+    .related-products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-md);
+    }
+}
+
+@media (max-width: 480px) {
+    .related-products-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+    }
+}

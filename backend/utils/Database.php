@@ -33,6 +33,16 @@ class Database {
         return $this->connection;
     }
 
+    public function query($sql, $params = []) {
+        $stmt = $this->connection->prepare($sql);
+        $stmt->execute($params);
+        return $stmt;
+    }
+
+    public function lastInsertId() {
+        return $this->connection->lastInsertId();
+    }
+
     private function __clone() {}
     
     public function __wakeup() {

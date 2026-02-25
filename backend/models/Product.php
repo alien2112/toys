@@ -10,13 +10,19 @@ class Product {
     }
 
     public function getAll($category = null, $limit = null, $offset = null, $search = null, $minPrice = null, $maxPrice = null, $sortBy = 'created_at', $sortOrder = 'DESC') {
-        $sql = "SELECT p.*, c.name as category_name, c.slug as category_slug,
-                       MATCH(p.name, p.description) AGAINST(? IN NATURAL LANGUAGE MODE) as relevance_score
-                FROM products p 
-                LEFT JOIN categories c ON p.category_id = c.id 
-                WHERE p.is_active = 1";
+        $sql = "SELECT p.*, c.name as category_name, c.slug as category_slug";
         
         $params = [];
+        
+        // Add relevance_score only if searching
+        if ($search) {
+            $sql .= ", MATCH(p.name, p.description) AGAINST(? IN NATURAL LANGUAGE MODE) as relevance_score";
+            $params[] = $search;
+        }
+        
+        $sql .= " FROM products p 
+                LEFT JOIN categories c ON p.category_id = c.id 
+                WHERE p.is_active = 1";
         
         if ($category) {
             $sql .= " AND c.slug = ?";

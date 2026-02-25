@@ -216,18 +216,34 @@ class Chat {
     }
 
     /**
+     * Get user message count for session (for anonymous users)
+     */
+    public function getUserMessageCount($sessionId) {
+        $session = $this->getSessionBySessionId($sessionId);
+        if (!$session) return 0;
+
+        $stmt = $this->db->prepare(
+            "SELECT COUNT(*) as count FROM chat_messages
+             WHERE session_id = ? AND sender_type = 'user'"
+        );
+        $stmt->execute([$session['id']]);
+        $result = $stmt->fetch();
+        return (int)$result['count'];
+    }
+
+    /**
      * Clean up old inactive sessions
      */
     public function cleanupOldSessions() {
         // End sessions inactive for more than 2 hours
         $stmt = $this->db->prepare(
-            "UPDATE chat_sessions 
-             SET status = 'ended', ended_at = NOW() 
-             WHERE status = 'active' 
+            "UPDATE chat_sessions
+             SET status = 'ended', ended_at = NOW()
+             WHERE status = 'active'
              AND started_at < DATE_SUB(NOW(), INTERVAL 2 HOUR)
              AND id NOT IN (
-                 SELECT DISTINCT session_id 
-                 FROM chat_messages 
+                 SELECT DISTINCT session_id
+                 FROM chat_messages
                  WHERE created_at > DATE_SUB(NOW(), INTERVAL 2 HOUR)
              )"
         );

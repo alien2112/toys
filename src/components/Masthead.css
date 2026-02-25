@@ -340,6 +340,15 @@
   transform: translateY(-50%) scale(1.08);
 }
 
+.ms-hero__nav:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8), 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.ms-hero__nav:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
 .ms-hero__nav--prev {
   right: 20px;
 }

@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../utils/Database.php';
 require_once __DIR__ . '/../utils/Response.php';
+require_once __DIR__ . '/../middleware/AuthMiddleware.php';
 
 class BlogController {
     private $db;
@@ -286,6 +287,8 @@ class BlogController {
      * Toggle featured status of a blog (max 3 featured blogs)
      */
     public function toggleFeatured($id) {
+        $user = AuthMiddleware::requireAdmin();
+        
         // Check if blog exists
         $blog = $this->db->query("SELECT featured FROM blogs WHERE id = :id", ['id' => $id])->fetch(PDO::FETCH_ASSOC);
         
@@ -319,13 +322,15 @@ class BlogController {
      * Delete blog
      */
     public function deleteBlog($id) {
+        $user = AuthMiddleware::requireAdmin();
+        
         // Delete tag relations first
         $this->db->query("DELETE FROM blog_tag_relations WHERE blog_id = :id", ['id' => $id]);
         
         // Delete blog
         $this->db->query("DELETE FROM blogs WHERE id = :id", ['id' => $id]);
         
-        return true;
+        Response::success(null, 'Blog deleted successfully');
     }
     
     /**
@@ -348,6 +353,8 @@ class BlogController {
      * Get blogs for admin (including drafts)
      */
     public function getBlogsForAdmin($page = 1, $limit = 10, $search = null, $status = null) {
+        $user = AuthMiddleware::requireAdmin();
+        
         $offset = ($page - 1) * $limit;
         
         $sql = "SELECT b.*, c.name as category_name 
@@ -372,13 +379,17 @@ class BlogController {
         $params['limit'] = $limit;
         $params['offset'] = $offset;
         
-        return $this->db->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
+        $blogs = $this->db->query($sql, $params)->fetchAll(PDO::FETCH_ASSOC);
+        
+        Response::success(['blogs' => $blogs]);
     }
     
     /**
      * Get total blogs count for admin
      */
     public function getBlogsCount($search = null, $status = null) {
+        $user = AuthMiddleware::requireAdmin();
+        
         $sql = "SELECT COUNT(*) as count FROM blogs WHERE 1=1";
         $params = [];
         
@@ -393,7 +404,7 @@ class BlogController {
         }
         
         $result = $this->db->query($sql, $params)->fetch(PDO::FETCH_ASSOC);
-        return $result['count'];
+        Response::success(['count' => intval($result['count'])]);
     }
     
     // Private methods

@@ -14,8 +14,8 @@ return [
         'expiration' => 86400
     ],
     'cors' => [
-        'allowed_origins' => ['http://localhost:5173', 'http://localhost:3000'],
+        'allowed_origins' => ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:43373', 'http://localhost:5175', 'http://127.0.0.1:41689'],
         'allowed_methods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-        'allowed_headers' => ['Content-Type', 'Authorization']
+        'allowed_headers' => ['Content-Type', 'Authorization', 'X-Requested-With']
     ]
 ];

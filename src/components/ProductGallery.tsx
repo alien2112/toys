@@ -2,6 +2,7 @@
 
 import { useState, useRef, MouseEvent, useEffect, useCallback } from 'react';
 import { Expand, X, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
+import './ProductGallery.css';
 
 interface ProductGalleryProps {
   images: string[];

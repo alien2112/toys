@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8002/api';
+const API_BASE_URL = 'http://localhost:8000/api';
 
 interface ApiResponse<T> {
   success: boolean;
@@ -109,7 +109,7 @@ class ApiService {
     return this.request<any>(`/cart/${userId}`);
   }
 
-  async addToCart(data: { product_id: number; quantity: number }) {
+  async addToCart(data: { product_id: number; quantity: number; variant_id?: number }) {
     return this.request<any>('/cart', {
       method: 'POST',
       body: JSON.stringify(data),

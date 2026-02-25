@@ -1,3 +1,107 @@
+/* Payment Notice Styles */
+.payment-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #856404;
+  font-family: 'Cairo', sans-serif;
+}
+
+.payment-notice svg {
+  flex-shrink: 0;
+}
+
+/* Payment Status Styles */
+.order-payment-section {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.payment-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #495057;
+  margin: 0 0 0.75rem 0;
+  font-family: 'Cairo', sans-serif;
+}
+
+.payment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.payment-detail {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.payment-method-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #e9ecef;
+  border-radius: 6px;
+  color: #495057;
+}
+
+.payment-method-text {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #212529;
+  font-family: 'Cairo', sans-serif;
+}
+
+.payment-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: 'Cairo', sans-serif;
+  white-space: nowrap;
+}
+
+.payment-status-paid {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.payment-status-pending {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.payment-status-failed {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.payment-status-refunded {
+  background: #e2e3e5;
+  color: #383d41;
+  border: 1px solid #d6d8db;
+}
+
 .orders-page {
   min-height: calc(100vh - 200px);
   padding: 3rem 2rem;

@@ -8,6 +8,50 @@ require_once __DIR__ . '/../middleware/RateLimiter.php';
 require_once __DIR__ . '/../middleware/AuthMiddleware.php';
 require_once __DIR__ . '/../utils/Database.php';
 
+/**
+ * @OA\Schema(
+ *     schema="User",
+ *     type="object",
+ *     required={"id", "email", "first_name", "last_name"},
+ *     @OA\Property(property="id", type="integer", description="User ID"),
+ *     @OA\Property(property="email", type="string", format="email", description="User email"),
+ *     @OA\Property(property="first_name", type="string", description="User first name"),
+ *     @OA\Property(property="last_name", type="string", description="User last name"),
+ *     @OA\Property(property="role", type="string", enum={"user", "admin"}, description="User role"),
+ *     @OA\Property(property="created_at", type="string", format="date-time", description="Creation timestamp"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time", description="Last update timestamp")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="RegisterRequest",
+ *     type="object",
+ *     required={"email", "password", "first_name", "last_name"},
+ *     @OA\Property(property="email", type="string", format="email", description="User email address"),
+ *     @OA\Property(property="password", type="string", format="password", minLength=8, description="User password (minimum 8 characters)"),
+ *     @OA\Property(property="first_name", type="string", description="User first name"),
+ *     @OA\Property(property="last_name", type="string", description="User last name")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="LoginRequest",
+ *     type="object",
+ *     required={"email", "password"},
+ *     @OA\Property(property="email", type="string", format="email", description="User email address"),
+ *     @OA\Property(property="password", type="string", format="password", description="User password")
+ * )
+ *
+ * @OA\Schema(
+ *     schema="AuthResponse",
+ *     type="object",
+ *     @OA\Property(property="success", type="boolean", example=true),
+ *     @OA\Property(property="message", type="string", example="Login successful"),
+ *     @OA\Property(property="data", type="object",
+ *         @OA\Property(property="user", ref="#/components/schemas/User"),
+ *         @OA\Property(property="token", type="string", description="JWT authentication token")
+ *     )
+ * )
+ */
+
 class AuthController {
     private $userModel;
     private $db;
@@ -17,6 +61,48 @@ class AuthController {
         $this->db = Database::getInstance()->getConnection();
     }
 
+    /**
+     * @OA\Post(
+     *     path="/register",
+     *     summary="Register a new user",
+     *     description="Creates a new user account with email, password, and personal information",
+     *     operationId="registerUser",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/RegisterRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="User registered successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/AuthResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid input data",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Missing required fields")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=409,
+     *         description="Email already exists",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Email already exists")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=429,
+     *         description="Too many requests - rate limited",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Too many requests")
+     *         )
+     *     )
+     * )
+     */
     public function register() {
         // Rate limiting
         $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';

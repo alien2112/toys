@@ -3,6 +3,7 @@ import {
   Mail, Phone, Clock, MapPin, Send, CheckCircle,
   MessageCircle, Shield, Zap, Users, ChevronDown
 } from 'lucide-react'
+import CountUp from 'react-countup'
 import './ContactPage.css'
 
 interface ContactInfo {
@@ -135,7 +136,7 @@ const ContactPage: React.FC = () => {
             <div className="cp-hero__stat">
               <Users size={20} className="cp-hero__stat-icon" />
               <div>
-                <span className="cp-hero__stat-value">+5K</span>
+                <span className="cp-hero__stat-value"><CountUp end={5000} prefix="+" suffix="K" /></span>
                 <span className="cp-hero__stat-label">عميل سعيد</span>
               </div>
             </div>
@@ -143,7 +144,7 @@ const ContactPage: React.FC = () => {
             <div className="cp-hero__stat">
               <Shield size={20} className="cp-hero__stat-icon" />
               <div>
-                <span className="cp-hero__stat-value">100%</span>
+                <span className="cp-hero__stat-value"><CountUp end={100} suffix="%" /></span>
                 <span className="cp-hero__stat-label">خصوصية آمنة</span>
               </div>
             </div>

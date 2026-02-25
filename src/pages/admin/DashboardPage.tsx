@@ -44,21 +44,22 @@ const AdminDashboardPage: React.FC = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const user = localStorage.getItem('user')
-    if (!user || JSON.parse(user).role !== 'admin') {
-      navigate('/')
-      return
-    }
-
     fetchDashboardData()
-  }, [navigate])
+  }, [])
 
   const fetchDashboardData = async () => {
     try {
+      const token = localStorage.getItem('auth_token')
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      }
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+
       const response = await fetch('http://localhost:8000/api/admin/dashboard', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-        }
+        headers
       })
 
       const data = await response.json()

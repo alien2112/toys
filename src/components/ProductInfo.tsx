@@ -4,9 +4,15 @@ import { useState } from 'react';
 import { Product } from '../types/product.types';
 import { useCart } from '../context/CartContext';
 import { Star, ShoppingCart, Heart, Share2, Check } from 'lucide-react';
+import { VariantSelector } from './VariantSelector';
+import './ProductInfo.css';
 
 interface ProductInfoProps {
-  product: Product;
+  product: Product & {
+    hasVariants?: boolean;
+    variants?: any[];
+    selectedVariant?: any;
+  };
 }
 
 export const ProductInfo = ({ product }: ProductInfoProps) => {
@@ -14,18 +20,32 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState(product.selectedVariant || null);
 
   const isOutOfStock = product.stock === 0;
   const isLowStock = product.stock > 0 && product.stock < 10;
 
+  const handleVariantSelect = (variant: any) => {
+    setSelectedVariant(variant);
+  };
+
   const handleAddToCart = () => {
-    addToCart({
+    const itemToAdd = {
       id: parseInt(product.id.toString()),
       name: product.name,
       price: product.price,
       image: product.image,
-      quantity,
-    });
+      category: product.category || '',
+      ...(selectedVariant && {
+        variantId: selectedVariant.id,
+        variantName: selectedVariant.variant_options
+          .map((opt: any) => `${opt.type_name}: ${opt.value}`)
+          .join(', '),
+        variantSku: selectedVariant.sku
+      })
+    };
+    
+    addToCart(itemToAdd, quantity);
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2200);
   };
@@ -96,6 +116,15 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
         <div className="pdp-info__desc">
           {product.longDescription || product.description}
         </div>
+      )}
+
+      {/* Variant Selector */}
+      {product.hasVariants && product.variants && (
+        <VariantSelector
+          variants={product.variants}
+          selectedVariant={selectedVariant}
+          onVariantSelect={handleVariantSelect}
+        />
       )}
 
       {/* Actions */}

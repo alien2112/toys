@@ -9,7 +9,7 @@ class Order {
         $this->db = Database::getInstance()->getConnection();
     }
 
-    public function create($userId, $totalAmount, $shippingAddress, $items) {
+    public function create($userId, $totalAmount, $shippingAddress, $items, $paymentMethod = 'cash_on_delivery') {
         try {
             $this->db->beginTransaction();
 
@@ -36,11 +36,12 @@ class Order {
                 $calculatedTotal += $product['price'] * $item['quantity'];
             }
 
-            // Step 2: Insert the order with server-calculated total
+            // Step 2: Insert the order with payment method
             $stmt = $this->db->prepare(
-                "INSERT INTO orders (user_id, total_amount, shipping_address) VALUES (?, ?, ?)"
+                "INSERT INTO orders (user_id, total_amount, shipping_address, payment_method, payment_status) VALUES (?, ?, ?, ?, ?)"
             );
-            $stmt->execute([$userId, $calculatedTotal, $shippingAddress]);
+            $paymentStatus = $paymentMethod === 'cash_on_delivery' ? 'pending' : 'pending';
+            $stmt->execute([$userId, $calculatedTotal, $shippingAddress, $paymentMethod, $paymentStatus]);
             $orderId = $this->db->lastInsertId();
 
             // Step 3: Insert order items and update stock atomically

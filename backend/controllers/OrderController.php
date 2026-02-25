@@ -32,6 +32,14 @@ class OrderController {
             Response::error('Shipping address is required', 400);
         }
 
+        // Get payment method (default to cash_on_delivery)
+        $paymentMethod = $data['payment_method'] ?? 'cash_on_delivery';
+        $validPaymentMethods = ['cash_on_delivery', 'credit_card', 'paypal', 'bank_transfer'];
+        
+        if (!in_array($paymentMethod, $validPaymentMethods)) {
+            Response::error('Invalid payment method', 400);
+        }
+
         // Validate and calculate total with price verification
         $totalAmount = 0;
         $validatedItems = [];
@@ -81,7 +89,8 @@ class OrderController {
                 $user['user_id'],
                 $totalAmount,
                 Validator::sanitizeString($data['shipping_address']),
-                $validatedItems
+                $validatedItems,
+                $paymentMethod
             );
 
             // Clear user's cart after successful order

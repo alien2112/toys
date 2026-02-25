@@ -20,6 +20,13 @@
   font-size: 14px;
 }
 
+.profile-button svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+  flex-shrink: 0;
+}
+
 .profile-button:hover {
   border-color: #ff6b6b;
   color: #ff6b6b;

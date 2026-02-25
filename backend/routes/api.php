@@ -18,6 +18,8 @@ require_once __DIR__ . '/../controllers/InventoryController.php';
 require_once __DIR__ . '/../controllers/SupplierController.php';
 require_once __DIR__ . '/../controllers/SupportController.php';
 require_once __DIR__ . '/../controllers/ChatController.php';
+require_once __DIR__ . '/../controllers/ProductVariantController.php';
+require_once __DIR__ . '/../controllers/SwaggerController.php';
 
 class Router {
     private $routes = [];
@@ -69,6 +71,8 @@ $inventoryController = new InventoryController();
 $supplierController = new SupplierController();
 $supportController = new SupportController();
 $chatController = new ChatController();
+$variantController = new ProductVariantController();
+$swaggerController = new SwaggerController();
 
 $router->add('POST', '/register', [$authController, 'register']);
 $router->add('POST', '/login', [$authController, 'login']);
@@ -84,6 +88,19 @@ $router->add('POST', '/products', [$productController, 'create']);
 $router->add('PUT', '/products/{id}', [$productController, 'update']);
 $router->add('PUT', '/products/{id}/toggle-featured', [$productController, 'toggleFeatured']);
 $router->add('DELETE', '/products/{id}', [$productController, 'delete']);
+
+// Product variant routes
+$router->add('GET', '/products/{productId}/variants', [$variantController, 'getByProductId']);
+$router->add('GET', '/variants/{id}', [$variantController, 'getById']);
+$router->add('POST', '/products/{productId}/variants', [$variantController, 'create']);
+$router->add('PUT', '/variants/{id}', [$variantController, 'update']);
+$router->add('DELETE', '/variants/{id}', [$variantController, 'delete']);
+
+// Variant management routes
+$router->add('GET', '/admin/variant-types', [$variantController, 'getVariantTypes']);
+$router->add('POST', '/admin/variant-types', [$variantController, 'createVariantType']);
+$router->add('GET', '/admin/variant-types/{typeId}/options', [$variantController, 'getVariantOptions']);
+$router->add('POST', '/admin/variant-options', [$variantController, 'createVariantOption']);
 
 $router->add('POST', '/cart', [$cartController, 'addToCart']);
 $router->add('GET', '/cart/{userId}', [$cartController, 'getCart']);
@@ -234,5 +251,9 @@ $router->add('GET', '/admin/analytics/inventory', [$analyticsController, 'getInv
 $router->add('GET', '/admin/analytics/cro', [$analyticsController, 'getCROAnalytics']);
 $router->add('GET', '/admin/analytics/export', [$analyticsController, 'exportAnalytics']);
 $router->add('POST', '/admin/analytics/update-summaries', [$analyticsController, 'updateDailySummaries']);
+
+// Swagger documentation routes
+$router->add('GET', '/docs', [$swaggerController, 'index']);
+$router->add('GET', '/docs/swagger.json', [$swaggerController, 'json']);
 
 return $router;

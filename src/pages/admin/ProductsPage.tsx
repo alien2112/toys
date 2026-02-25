@@ -42,15 +42,9 @@ const AdminProductsPage: React.FC = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const user = localStorage.getItem('user')
-    if (!user || JSON.parse(user).role !== 'admin') {
-      navigate('/')
-      return
-    }
-
     fetchProducts()
     fetchCategories()
-  }, [navigate])
+  }, [])
 
   const fetchCategories = async () => {
     try {
@@ -221,7 +215,8 @@ const AdminProductsPage: React.FC = () => {
       const response = await fetch(`http://localhost:8000/api/products/${id}/toggle-featured`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json'
         }
       })
 

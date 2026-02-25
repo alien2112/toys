@@ -54,6 +54,8 @@ export const ProductDetailPage = () => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [product, setProduct] = useState<any>(null);
+  const [variants, setVariants] = useState<any[]>([]);
+  const [selectedVariant, setSelectedVariant] = useState<any>(null);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<'desc' | 'specs' | 'reviews'>('desc');
 
@@ -67,6 +69,22 @@ export const ProductDetailPage = () => {
 
         if (productData.success && productData.data) {
           setProduct(productData.data);
+          
+          // Fetch variants if product has them
+          if (productData.data.has_variants) {
+            const variantsRes = await fetch(`http://localhost:8000/api/products/${id}/variants`);
+            const variantsData = await variantsRes.json();
+            
+            if (variantsData.success) {
+              setVariants(variantsData.data || []);
+              // Select first available variant by default
+              const firstVariant = variantsData.data?.find((v: any) => v.is_active);
+              if (firstVariant) {
+                setSelectedVariant(firstVariant);
+              }
+            }
+          }
+          
           if (productData.data.category_slug) {
             const relatedRes = await fetch(`http://localhost:8000/api/products?category=${productData.data.category_slug}&limit=5`);
             const relatedData = await relatedRes.json();
@@ -92,6 +110,8 @@ export const ProductDetailPage = () => {
     fetchProductData();
   }, [id]);
 
+
+
   /* ── Loading state ── */
   if (isLoading) return <LoadingSkeleton />;
 
@@ -112,23 +132,29 @@ export const ProductDetailPage = () => {
   }
 
   /* ── Mapped product ── */
+  const currentDisplayProduct = selectedVariant || product;
   const mapped = {
     id: product.id.toString(),
     name: product.name,
     description: product.description,
     longDescription: product.description,
-    price: parseFloat(product.price),
-    image: product.image_url,
+    price: parseFloat(currentDisplayProduct?.price || product.price),
+    image: currentDisplayProduct?.image_url || product.image_url,
     images:
-      product.images && product.images.length > 0
-        ? product.images.map((img: any) => `http://localhost:8000${img.image_url}`)
-        : product.image_url ? [product.image_url] : [],
+      currentDisplayProduct?.image_url 
+        ? [currentDisplayProduct.image_url]
+        : product.images && product.images.length > 0
+          ? product.images.map((img: any) => `http://localhost:8000${img.image_url}`)
+          : product.image_url ? [product.image_url] : [],
     category: product.category_name,
     rating: 4.5,
     reviewsCount: 0,
-    stock: product.stock,
+    stock: currentDisplayProduct?.stock || product.stock,
     featured: false,
     specifications: {},
+    hasVariants: product.has_variants,
+    variants: variants,
+    selectedVariant: selectedVariant,
   };
 
   const mappedRelated = relatedProducts.map((p: any) => ({

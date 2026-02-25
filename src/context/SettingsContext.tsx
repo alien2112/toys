@@ -48,7 +48,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
 
   const fetchSettings = async () => {
     try {
-      const response = await fetch('http://localhost:8002/api/settings')
+      const response = await fetch('http://localhost:8000/api/settings')
       const data = await response.json()
       
       if (data.success) {

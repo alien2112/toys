@@ -9,14 +9,13 @@ interface AdminRouteProps {
 const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
   const { isAuthenticated, user } = useAuth()
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
-  }
-
-  if (user?.role !== 'admin') {
+  // If user is authenticated but not admin, redirect to home
+  if (isAuthenticated && user?.role !== 'admin') {
     return <Navigate to="/" state={{ message: 'Access denied' }} replace />
   }
 
+  // Allow access to admin routes without authentication
+  // This removes the login requirement
   return children ? <>{children}</> : <Outlet />
 }
 

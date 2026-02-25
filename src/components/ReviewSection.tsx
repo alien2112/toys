@@ -65,7 +65,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName })
       setError('')
 
       const response = await fetch(
-        `http://localhost:8002/api/products/${productId}/reviews?sort=${sortOption}&limit=10&page=${reset ? 1 : page}`
+        `http://localhost:8000/api/products/${productId}/reviews?sort=${sortOption}&limit=10&page=${reset ? 1 : page}`
       )
       const data = await response.json()
 
@@ -96,8 +96,8 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName })
       const token = localStorage.getItem('auth_token')
       const method = editingReview ? 'PUT' : 'POST'
       const url = editingReview 
-        ? `http://localhost:8002/api/reviews/${editingReview.id}`
-        : `http://localhost:8002/api/reviews`
+        ? `http://localhost:8000/api/reviews/${editingReview.id}`
+        : `http://localhost:8000/api/reviews`
 
       const response = await fetch(url, {
         method,
@@ -135,7 +135,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName })
 
     try {
       const token = localStorage.getItem('auth_token')
-      const response = await fetch(`http://localhost:8002/api/reviews/${reviewId}`, {
+      const response = await fetch(`http://localhost:8000/api/reviews/${reviewId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -157,7 +157,7 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({ productId, productName })
   const handleHelpfulVote = async (reviewId: number, voteType: 'helpful' | 'not_helpful') => {
     try {
       const token = localStorage.getItem('auth_token')
-      const response = await fetch(`http://localhost:8002/api/reviews/${reviewId}/helpful`, {
+      const response = await fetch(`http://localhost:8000/api/reviews/${reviewId}/helpful`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

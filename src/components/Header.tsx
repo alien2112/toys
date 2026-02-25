@@ -37,8 +37,8 @@ const Header: React.FC = () => {
           <div className="logo-container">
             <Link to="/" className="logo">
               {settings.header_logo_url ? (
-                <img 
-                  src={settings.header_logo_url} 
+                <img
+                  src={settings.header_logo_url}
                   alt={settings.store_name}
                   className="logo-image"
                 />
@@ -77,6 +77,9 @@ const Header: React.FC = () => {
           </nav>
 
           <div className="header-actions">
+            <Link to="/wishlist" className="cart-link" aria-label="المفضلة">
+              <Heart size={20} />
+            </Link>
             <Link to="/cart" className="cart-link">
               <ShoppingCart size={20} />
               {totalItems > 0 && (
@@ -86,7 +89,7 @@ const Header: React.FC = () => {
             <ProfileDropdown />
           </div>
 
-          <button 
+          <button
             className="mobile-menu-toggle"
             onClick={toggleMobileMenu}
             aria-label="Toggle menu"
@@ -103,8 +106,8 @@ const Header: React.FC = () => {
             <div className="logo-container">
               <Link to="/" className="logo" onClick={closeMobileMenu}>
                 {settings.header_logo_url ? (
-                  <img 
-                    src={settings.header_logo_url} 
+                  <img
+                    src={settings.header_logo_url}
                     alt={settings.store_name}
                     className="logo-image"
                   />
@@ -116,7 +119,7 @@ const Header: React.FC = () => {
                 )}
               </Link>
             </div>
-            <button 
+            <button
               className="mobile-nav-close"
               onClick={closeMobileMenu}
               aria-label="Close menu"
@@ -158,7 +161,7 @@ const Header: React.FC = () => {
           </nav>
         </div>
       </div>
-      
+
       <ChatWidget />
     </>
   )

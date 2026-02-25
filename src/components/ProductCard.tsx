@@ -97,7 +97,7 @@ export const ProductCard = ({ product, listView = false }: ProductCardProps) => 
           aria-label={wishlisted ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}
           onClick={handleWishlist}
         >
-          <Heart size={18} fill={wishlisted ? 'currentColor' : 'none'} />
+          <Heart size={18} fill={wishlisted ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={2} />
         </button>
       </div>
 

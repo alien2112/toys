@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Package, Calendar, DollarSign, Truck, AlertCircle } from 'lucide-react'
+import { Package, Calendar, DollarSign, Truck, AlertCircle, CreditCard, Banknote } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { apiService } from '../services/api'
 import './OrdersPage.css'
@@ -16,6 +16,8 @@ interface Order {
   user_id: number
   total_amount: number
   status: string
+  payment_method?: string
+  payment_status?: string
   shipping_address: string
   created_at: string
   updated_at: string
@@ -52,6 +54,50 @@ const OrdersPage: React.FC = () => {
     fetchOrders()
   }, [user])
 
+  const getPaymentStatusText = (status?: string) => {
+    if (!status) return 'غير محدد'
+    switch (status.toLowerCase()) {
+      case 'paid': return 'مدفوع'
+      case 'pending': return 'في الانتظار'
+      case 'failed': return 'فشل'
+      case 'refunded': return 'مسترد'
+      default: return status
+    }
+  }
+
+  const getPaymentStatusClass = (status?: string) => {
+    if (!status) return ''
+    switch (status.toLowerCase()) {
+      case 'paid': return 'payment-status-paid'
+      case 'pending': return 'payment-status-pending'
+      case 'failed': return 'payment-status-failed'
+      case 'refunded': return 'payment-status-refunded'
+      default: return ''
+    }
+  }
+
+  const getPaymentMethodText = (method?: string) => {
+    if (!method) return 'غير محدد'
+    switch (method.toLowerCase()) {
+      case 'cash_on_delivery': return 'الدفع عند الاستلام'
+      case 'credit_card': return 'بطاقة ائتمانية'
+      case 'paypal': return 'باي بال'
+      case 'bank_transfer': return 'تحويل بنكي'
+      default: return method
+    }
+  }
+
+  const getPaymentMethodIcon = (method?: string) => {
+    if (!method) return null
+    switch (method.toLowerCase()) {
+      case 'cash_on_delivery': return <Banknote size={16} />
+      case 'credit_card': return <CreditCard size={16} />
+      case 'paypal': return <DollarSign size={16} />
+      case 'bank_transfer': return <DollarSign size={16} />
+      default: return <DollarSign size={16} />
+    }
+  }
+
   const getStatusText = (status: string) => {
     switch (status.toLowerCase()) {
       case 'delivered': return 'تم التوصيل'
@@ -85,7 +131,7 @@ const OrdersPage: React.FC = () => {
     }
   }
 
-  const OrderProgressStepper = ({ currentStatus }: { currentStatus: string }) => {
+  const OrderProgressStepper = ({ currentStatus, paymentStatus, paymentMethod }: { currentStatus: string; paymentStatus?: string; paymentMethod?: string }) => {
     const currentStep = getStatusStep(currentStatus)
     const steps = [
       { key: 'pending', label: 'قيد الانتظار', icon: <AlertCircle size={16} /> },
@@ -94,8 +140,17 @@ const OrdersPage: React.FC = () => {
       { key: 'delivered', label: 'تم التوصيل', icon: <Calendar size={16} /> }
     ]
 
+    // For cash on delivery, add payment step
+    const showPaymentStep = paymentMethod === 'cash_on_delivery' && paymentStatus !== 'paid'
+
     return (
       <div className="order-progress">
+        {showPaymentStep && (
+          <div className="payment-notice">
+            <Banknote size={14} />
+            <span>الدفع عند الاستلام - {paymentStatus === 'pending' ? 'في انتظار الدفع' : 'مدفوع'}</span>
+          </div>
+        )}
         <div className="progress-steps">
           {steps.map((step, index) => {
             const stepNumber = index + 1
@@ -224,10 +279,32 @@ const OrdersPage: React.FC = () => {
                 </div>
               </div>
 
+              {/* Payment Information */}
+              <div className="order-payment-section">
+                <h4 className="payment-title">معلومات الدفع</h4>
+                <div className="payment-details">
+                  <div className="payment-detail">
+                    <span className="payment-method-icon">
+                      {getPaymentMethodIcon(order.payment_method)}
+                    </span>
+                    <span className="payment-method-text">
+                      {getPaymentMethodText(order.payment_method)}
+                    </span>
+                    <span className={`payment-status ${getPaymentStatusClass(order.payment_status)}`}>
+                      {getPaymentStatusText(order.payment_status)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
               {/* Progress Stepper - Always Visible */}
               <div className="order-tracking-section">
                 <h4 className="tracking-title">تتبع الطلب</h4>
-                <OrderProgressStepper currentStatus={order.status} />
+                <OrderProgressStepper 
+                  currentStatus={order.status} 
+                  paymentStatus={order.payment_status}
+                  paymentMethod={order.payment_method}
+                />
               </div>
 
               {/* Expandable Details */}

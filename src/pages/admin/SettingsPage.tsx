@@ -31,14 +31,8 @@ const AdminSettingsPage: React.FC = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const user = localStorage.getItem('user')
-    if (!user || JSON.parse(user).role !== 'admin') {
-      navigate('/')
-      return
-    }
-
     fetchSettings()
-  }, [navigate])
+  }, [])
 
   const fetchSettings = async () => {
     try {

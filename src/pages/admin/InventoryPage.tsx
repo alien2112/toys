@@ -162,7 +162,7 @@ const InventoryPage: React.FC = () => {
                   </div>
                   <div className="stock-info">
                     <h3>{item.name}</h3>
-                    <p className="price">{item.price.toFixed(2)} ر.س</p>
+                    <p className="price">{typeof item.price === 'string' ? parseFloat(item.price).toFixed(2) : item.price.toFixed(2)} ر.س</p>
                     <div className="stock-level">
                       <span className={`stock-count ${item.stock === 0 ? 'out' : 'low'}`}>
                         {item.stock} units

@@ -5,6 +5,7 @@ require_once __DIR__ . '/../seed_products.php';
 require_once __DIR__ . '/../seed_users.php';
 require_once __DIR__ . '/../seed_product_images.php';
 require_once __DIR__ . '/../seed_blogs.php';
+require_once __DIR__ . '/../middleware/AuthMiddleware.php';
 
 class AdminSeederController {
     private $db;
@@ -17,7 +18,7 @@ class AdminSeederController {
      * Get seeder status and statistics
      */
     public function getStatus() {
-        $this->requireAdmin();
+        $user = AuthMiddleware::requireAdmin();
         
         $stats = [
             'products' => $this->getProductStats(),
@@ -34,7 +35,7 @@ class AdminSeederController {
      * Preview Excel data before seeding
      */
     public function previewData() {
-        $this->requireAdmin();
+        $user = AuthMiddleware::requireAdmin();
         
         try {
             require_once __DIR__ . '/../seed_excel_data.php';
@@ -65,7 +66,7 @@ class AdminSeederController {
      * Seed products from Excel files
      */
     public function seedProducts() {
-        $this->requireAdmin();
+        $user = AuthMiddleware::requireAdmin();
         
         try {
             $mode = $_POST['mode'] ?? 'merge';
@@ -101,7 +102,7 @@ class AdminSeederController {
      * Seed users from Excel files
      */
     public function seedUsers() {
-        $this->requireAdmin();
+        $user = AuthMiddleware::requireAdmin();
         
         try {
             $mode = $_POST['mode'] ?? 'merge';
@@ -137,7 +138,7 @@ class AdminSeederController {
      * Seed product images
      */
     public function seedImages() {
-        $this->requireAdmin();
+        $user = AuthMiddleware::requireAdmin();
         
         try {
             // Capture output for progress tracking
@@ -159,7 +160,7 @@ class AdminSeederController {
      * Seed blogs
      */
     public function seedBlogs() {
-        $this->requireAdmin();
+        $user = AuthMiddleware::requireAdmin();
         
         try {
             $mode = $_POST['mode'] ?? 'merge';
@@ -196,7 +197,7 @@ class AdminSeederController {
      * Full seeding with all data
      */
     public function seedAll() {
-        $this->requireAdmin();
+        $user = AuthMiddleware::requireAdmin();
         
         try {
             $mode = $_POST['mode'] ?? 'merge';
@@ -347,17 +348,5 @@ class AdminSeederController {
         }
         
         return $status;
-    }
-    
-    /**
-     * Require admin authentication
-     */
-    private function requireAdmin() {
-        session_start();
-        
-        if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
-            Response::error('Admin access required', 403);
-            exit;
-        }
     }
 }

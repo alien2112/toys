@@ -58,18 +58,24 @@ const AdminBlogsPage: React.FC = () => {
       if (!response.ok) throw new Error('Failed to fetch blogs')
       
       const data = await response.json()
-      setBlogs(data.blogs || [])
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to fetch blogs')
+      }
+      
+      setBlogs(data.data?.blogs || [])
       
       // Fetch total count for pagination
       const countResponse = await fetch(`/api/admin/blogs/count?search=${searchTerm}&status=${statusFilter === 'all' ? '' : statusFilter}`)
       if (countResponse.ok) {
         const countData = await countResponse.json()
-        const totalItems = countData.count || 0
-        setPagination(prev => ({
-          ...prev,
-          totalItems,
-          totalPages: Math.ceil(totalItems / prev.itemsPerPage)
-        }))
+        if (countData.success) {
+          const totalItems = countData.data?.count || 0
+          setPagination(prev => ({
+            ...prev,
+            totalItems,
+            totalPages: Math.ceil(totalItems / prev.itemsPerPage)
+          }))
+        }
       }
     } catch (error) {
       console.error('Error fetching blogs:', error)
@@ -82,7 +88,10 @@ const AdminBlogsPage: React.FC = () => {
     try {
       setActionLoading(`featured-${blogId}`)
       const response = await fetch(`/api/admin/blogs/${blogId}/toggle-featured`, {
-        method: 'PUT'
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       })
       
       if (!response.ok) {

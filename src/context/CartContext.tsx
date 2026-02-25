@@ -32,21 +32,33 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 
   switch (action.type) {
     case 'ADD_TO_CART': {
-      const existingItem = state.items.find(item => item.id === action.payload.id)
+      const { product, quantity: quantityToAdd = 1 } = action.payload
+      
+      // Find existing item by product ID and variant ID
+      const existingItem = state.items.find(item => 
+        item.id === product.id && 
+        item.variantId === product.variantId
+      )
 
       if (existingItem) {
         newState = {
           ...state,
           items: state.items.map(item =>
-            item.id === action.payload.id
-              ? { ...item, quantity: item.quantity + 1 }
+            item.id === product.id && item.variantId === product.variantId
+              ? { ...item, quantity: item.quantity + quantityToAdd }
               : item
           ),
         }
       } else {
         newState = {
           ...state,
-          items: [...state.items, { ...action.payload, quantity: 1 }],
+          items: [...state.items, { 
+            ...product, 
+            quantity: quantityToAdd,
+            variantId: product.variantId,
+            variantName: product.variantName,
+            variantSku: product.variantSku
+          }],
         }
       }
       break
@@ -98,7 +110,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 
 interface CartContextValue {
   state: CartState
-  addToCart: (product: Product) => void
+  addToCart: (product: Product & { variantId?: number; variantName?: string; variantSku?: string }, quantity?: number) => void
   removeFromCart: (productId: number) => void
   increaseQuantity: (productId: number) => void
   decreaseQuantity: (productId: number) => void
@@ -129,20 +141,21 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
           // Get local guest cart
           const localCart = loadCartFromStorage()
-          
+
           if (localCart.items.length > 0) {
             // Merge local items into server cart
             for (const localItem of localCart.items) {
               try {
                 await apiService.addToCart({
                   product_id: localItem.id,
-                  quantity: localItem.quantity
+                  quantity: localItem.quantity,
+                  variant_id: localItem.variantId
                 })
               } catch (error) {
                 console.error('Failed to sync item to server:', error)
               }
             }
-            
+
             // Clear local cart after merge
             localStorage.removeItem(CART_STORAGE_KEY)
           }
@@ -157,7 +170,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
             quantity: item.quantity,
             cartItemId: item.id
           }))
-          
+
           dispatch({ type: 'SET_CART', payload: mappedItems })
         } catch (error) {
           console.error('Failed to sync cart with server:', error)
@@ -175,30 +188,31 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     syncCart()
   }, [isAuthenticated, user])
 
-  const addToCart = async (product: Product) => {
+  const addToCart = async (product: Product & { variantId?: number; variantName?: string; variantSku?: string }, quantity: number = 1) => {
     if (isAuthenticated && user) {
       try {
         // Add to server cart first
         await apiService.addToCart({
           product_id: product.id,
-          quantity: 1
+          quantity: quantity,
+          variant_id: product.variantId
         })
-        
-        dispatch({ type: 'ADD_TO_CART', payload: product })
+
+        dispatch({ type: 'ADD_TO_CART', payload: { product, quantity } })
       } catch (error) {
         console.error('Failed to add to server cart:', error)
         // Fallback to local-only update
-        dispatch({ type: 'ADD_TO_CART', payload: product })
+        dispatch({ type: 'ADD_TO_CART', payload: { product, quantity } })
       }
     } else {
       // Guest mode - use local storage only
-      dispatch({ type: 'ADD_TO_CART', payload: product })
+      dispatch({ type: 'ADD_TO_CART', payload: { product, quantity } })
     }
   }
 
   const removeFromCart = async (productId: number) => {
     const item = state.items.find(item => item.id === productId)
-    
+
     if (isAuthenticated && user && item?.cartItemId) {
       try {
         // Remove from server cart
@@ -217,7 +231,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
   const increaseQuantity = async (productId: number) => {
     const item = state.items.find(item => item.id === productId)
-    
+
     if (isAuthenticated && user && item?.cartItemId) {
       try {
         // Update on server
@@ -237,7 +251,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
   const decreaseQuantity = async (productId: number) => {
     const item = state.items.find(item => item.id === productId)
-    
+
     if (item && item.quantity > 1) {
       if (isAuthenticated && user && item?.cartItemId) {
         try {
@@ -266,7 +280,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         console.error('Failed to clear server cart:', error)
       }
     }
-    
+
     // Always clear local state
     dispatch({ type: 'CLEAR_CART' })
     localStorage.removeItem(CART_STORAGE_KEY)

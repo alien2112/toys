@@ -5,6 +5,7 @@ import {
   Share2, Facebook, Twitter, Linkedin,
   Tag, TrendingUp, Mail, User, BookOpen, Eye, ChevronUp, Menu, X
 } from 'lucide-react'
+import CountUp from 'react-countup'
 import './BlogDetailPage.css'
 
 interface RelatedPost {
@@ -312,7 +313,7 @@ const BlogDetailPage: React.FC = () => {
                     </span>
                     <span className="stat-item">
                       <Eye size={16} />
-                      {post.views.toLocaleString()} مشاهدة
+                      <CountUp end={post.views} separator="," /> مشاهدة
                     </span>
                   </div>
                 </div>
@@ -423,7 +424,7 @@ const BlogDetailPage: React.FC = () => {
                         <div className="widget-post-meta">
                           <span className="widget-post-date">{post.date}</span>
                           <span className="widget-post-stats">
-                            <Eye size={12} /> {post.views}
+                            <Eye size={12} /> <CountUp end={post.views || 0} />
                           </span>
                         </div>
                       </div>
@@ -514,7 +515,7 @@ const BlogDetailPage: React.FC = () => {
                   </div>
                   <div className="related-stats">
                     <span className="stat-item">
-                      <Eye size={14} /> {post.views}
+                      <Eye size={14} /> <CountUp end={post.views} />
                     </span>
                   </div>
                 </div>
