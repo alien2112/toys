@@ -110,7 +110,7 @@
 }
 
 /* ============================================================
-   HERO SLIDER
+   HERO BANNER
    ============================================================ */
 .ms-hero {
   position: relative;
@@ -120,92 +120,17 @@
   direction: rtl;
 }
 
-/* Panel strip */
-.ms-hero__panels {
-  display: flex;
+.ms-hero__banner {
+  position: relative;
   width: 100%;
   height: 100%;
-  transition: opacity 0.5s var(--ms-ease);
 }
 
-.ms-hero__panels--anim {
-  opacity: 0.65;
-}
-
-.ms-panel {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  transition: flex 0.6s var(--ms-ease);
-}
-
-.ms-panel:hover {
-  flex: 1.25;
-}
-
-.ms-panel--yellow {
-  background: linear-gradient(160deg, var(--ms-yellow) 0%, var(--ms-yellow-light) 100%);
-}
-
-.ms-panel--red {
-  background: linear-gradient(160deg, var(--ms-red) 0%, var(--ms-red-dark) 100%);
-}
-
-.ms-panel--blue {
-  background: linear-gradient(160deg, #7ec8e3 0%, #4fc3f7 100%);
-}
-
-.ms-panel--peach {
-  background: linear-gradient(160deg, #ffdab9 0%, #ffb6a3 100%);
-}
-
-.ms-panel--pink {
-  background: linear-gradient(160deg, #f9a8d4 0%, #ffc0cb 100%);
-}
-
-.ms-panel--skew {
-  clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
-}
-
-.ms-panel__content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  z-index: 2;
-  animation: ms-float 4s ease-in-out infinite;
-}
-
-.ms-panel__emoji {
-  font-size: 80px;
-  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.2));
-  line-height: 1;
-}
-
-.ms-panel__label {
-  font-family: var(--ms-font);
-  font-size: 14px;
-  font-weight: 700;
-  color: rgba(0, 0, 0, 0.6);
-  background: rgba(255, 255, 255, 0.55);
-  padding: 4px 14px;
-  border-radius: 50px;
-  backdrop-filter: blur(4px);
-}
-
-@keyframes ms-float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-14px);
-  }
+.ms-hero__banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 /* Gradient overlay for text readability */
@@ -213,15 +138,16 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(to left,
-      rgba(0, 0, 0, 0.55) 0%,
-      rgba(0, 0, 0, 0.3) 40%,
-      transparent 70%);
+      rgba(0, 0, 0, 0.65) 0%,
+      rgba(0, 0, 0, 0.4) 40%,
+      rgba(0, 0, 0, 0.2) 70%,
+      transparent 100%);
   z-index: 3;
   pointer-events: none;
 }
 
 /* Text block */
-.ms-hero__text {
+.ms-hero__content {
   position: absolute;
   top: 50%;
   right: 7%;
@@ -230,14 +156,7 @@
   max-width: 380px;
   text-align: right;
   direction: rtl;
-}
-
-.ms-hero__text--enter {
-  animation: ms-text-in 0.6s var(--ms-ease) both;
-}
-
-.ms-hero__text--exit {
-  animation: ms-text-out 0.3s ease both;
+  animation: ms-text-in 0.8s var(--ms-ease) both;
 }
 
 @keyframes ms-text-in {
@@ -245,20 +164,9 @@
     opacity: 0;
     transform: translateY(calc(-50% + 24px));
   }
-
   to {
     opacity: 1;
     transform: translateY(-50%);
-  }
-}
-
-@keyframes ms-text-out {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
   }
 }
 
@@ -273,6 +181,21 @@
   border-radius: 50px;
   margin-bottom: 14px;
   letter-spacing: 0.06em;
+  animation: ms-badge-pop 0.6s var(--ms-ease) 0.3s both;
+}
+
+@keyframes ms-badge-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .ms-hero__headline {
@@ -288,9 +211,10 @@
 .ms-hero__sub {
   font-family: var(--ms-font);
   font-size: 15px;
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(255, 255, 255, 0.92);
   margin: 0 0 28px;
   line-height: 1.7;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .ms-hero__cta {
@@ -307,82 +231,26 @@
   text-decoration: none;
   transition: transform 0.25s var(--ms-ease), box-shadow 0.25s;
   box-shadow: 0 6px 24px rgba(255, 184, 0, 0.45);
+  animation: ms-cta-bounce 0.7s var(--ms-ease) 0.6s both;
+}
+
+@keyframes ms-cta-bounce {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  60% {
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .ms-hero__cta:hover {
   transform: translateY(-3px) scale(1.03);
   box-shadow: 0 10px 32px rgba(255, 184, 0, 0.55);
-}
-
-/* Nav arrows */
-.ms-hero__nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.92);
-  border: none;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 5;
-  transition: all 0.25s var(--ms-ease);
-  color: var(--ms-text);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-}
-
-.ms-hero__nav:hover {
-  background: var(--ms-white);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
-  transform: translateY(-50%) scale(1.08);
-}
-
-.ms-hero__nav:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8), 0 4px 16px rgba(0, 0, 0, 0.15);
-}
-
-.ms-hero__nav:active {
-  transform: translateY(-50%) scale(0.95);
-}
-
-.ms-hero__nav--prev {
-  right: 20px;
-}
-
-.ms-hero__nav--next {
-  left: 20px;
-}
-
-/* Dots */
-.ms-hero__dots {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 8px;
-  z-index: 5;
-}
-
-.ms-hero__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  transition: all 0.3s var(--ms-ease);
-  padding: 0;
-}
-
-.ms-hero__dot--active {
-  background: var(--ms-yellow);
-  width: 28px;
-  border-radius: 4px;
 }
 
 /* WhatsApp float */
@@ -549,7 +417,7 @@
     height: 420px;
   }
 
-  .ms-hero__text {
+  .ms-hero__content {
     right: 5%;
     max-width: 320px;
   }
@@ -597,7 +465,7 @@
     font-size: 54px;
   }
 
-  .ms-hero__text {
+  .ms-hero__content {
     right: 16px;
     left: 16px;
     max-width: 100%;
@@ -605,15 +473,7 @@
   }
 
   .ms-hero__overlay {
-    background: rgba(0, 0, 0, 0.45);
-  }
-
-  .ms-hero__nav--prev {
-    right: 10px;
-  }
-
-  .ms-hero__nav--next {
-    left: 10px;
+    background: rgba(0, 0, 0, 0.5);
   }
 
   .ms-hero__whatsapp span {
@@ -663,10 +523,5 @@
 
   .ms-hero__sub {
     display: none;
-  }
-
-  .ms-hero__nav {
-    width: 38px;
-    height: 38px;
   }
 }

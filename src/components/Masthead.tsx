@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { Search, ChevronLeft, ChevronRight, Package, Star, CreditCard, Gift, Truck, Car, Waves, Smile, Baby, Circle, BookOpen, Bike, Trophy, Gamepad2, Puzzle, Sparkles, Box } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { Search, Package, Star, CreditCard, Gift, Truck, Car, Waves, Smile, Baby, Circle, BookOpen, Bike, Trophy, Gamepad2, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import './Masthead.css'
 
@@ -26,51 +26,6 @@ interface Category {
   description?: string
 }
 
-const slides = [
-  {
-    id: 0,
-    headline: 'العب، اكتشف، اِبتكر',
-    sub: 'أفضل الألعاب لكل سن وكل مناسبة',
-    badge: 'وصل حديثاً',
-    cta: 'تسوق الآن',
-    panels: [
-      { cls: 'ms-panel ms-panel--yellow', icon: <Bike size={24} />, label: 'دراجات' },
-      { cls: 'ms-panel ms-panel--red ms-panel--skew', icon: null, label: '' },
-      { cls: 'ms-panel ms-panel--blue', icon: <Box size={24} />, label: 'كراسي أطفال' },
-      { cls: 'ms-panel ms-panel--peach ms-panel--skew', icon: null, label: '' },
-      { cls: 'ms-panel ms-panel--pink', icon: <Smile size={24} />, label: 'دمى' },
-    ]
-  },
-  {
-    id: 1,
-    headline: 'ألعاب تعليمية رائعة',
-    sub: 'نمّي مهارات طفلك مع ألعابنا التعليمية',
-    badge: 'الأكثر مبيعاً',
-    cta: 'اكتشف المزيد',
-    panels: [
-      { cls: 'ms-panel ms-panel--blue', icon: <BookOpen size={24} />, label: 'تعليمي' },
-      { cls: 'ms-panel ms-panel--yellow ms-panel--skew', icon: null, label: '' },
-      { cls: 'ms-panel ms-panel--pink', icon: <Gamepad2 size={24} />, label: 'ألعاب ذكاء' },
-      { cls: 'ms-panel ms-panel--red ms-panel--skew', icon: null, label: '' },
-      { cls: 'ms-panel ms-panel--peach', icon: <Puzzle size={24} />, label: 'بازل' },
-    ]
-  },
-  {
-    id: 2,
-    headline: 'بالونات هيليوم للمناسبات',
-    sub: 'اجعل حفلتك لا تُنسى مع بالوناتنا',
-    badge: 'خاص للعيد',
-    cta: 'احجز الآن',
-    panels: [
-      { cls: 'ms-panel ms-panel--pink', icon: <Circle size={24} />, label: 'بالونات' },
-      { cls: 'ms-panel ms-panel--peach ms-panel--skew', icon: null, label: '' },
-      { cls: 'ms-panel ms-panel--yellow', icon: <Sparkles size={24} />, label: 'هدايا' },
-      { cls: 'ms-panel ms-panel--blue ms-panel--skew', icon: null, label: '' },
-      { cls: 'ms-panel ms-panel--red', icon: <Gift size={24} />, label: 'مفاجآت' },
-    ]
-  }
-]
-
 const features = [
   { icon: <Truck size={22} />, label: 'توصيل سريع', note: 'لجميع المناطق' },
   { icon: <Star size={22} />, label: 'جودة عالية', note: 'منتجات موثوقة' },
@@ -81,10 +36,7 @@ const features = [
 
 const Masthead: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([])
-  const [current, setCurrent] = useState(0)
-  const [animating, setAnimating] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
     fetchCategories()
@@ -92,7 +44,7 @@ const Masthead: React.FC = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/categories')
+      const response = await fetch('http://localhost:8080/api/categories')
       const data = await response.json()
       
       if (data.success) {
@@ -102,23 +54,6 @@ const Masthead: React.FC = () => {
       console.error('Failed to fetch categories:', error)
     }
   }
-
-  const goTo = (idx: number) => {
-    if (animating) return
-    setAnimating(true)
-    setCurrent(idx)
-    setTimeout(() => setAnimating(false), 500)
-  }
-
-  const next = () => goTo((current + 1) % slides.length)
-  const prev = () => goTo((current - 1 + slides.length) % slides.length)
-
-  useEffect(() => {
-    intervalRef.current = setInterval(next, 5000)
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
-  }, [current])
-
-  const slide = slides[current]
 
   return (
     <>
@@ -148,50 +83,24 @@ const Masthead: React.FC = () => {
         </div>
       </section>
 
-      {/* ── Hero Slider ── */}
+      {/* ── Hero Banner ── */}
       <section className="ms-hero" aria-label="العروض الرئيسية">
-        {/* Panels */}
-        <div className={`ms-hero__panels ${animating ? 'ms-hero__panels--anim' : ''}`}>
-          {slide.panels.map((p, i) => (
-            <div key={i} className={p.cls}>
-              {p.icon && (
-                <div className="ms-panel__content">
-                  <span className="ms-panel__emoji">{p.icon}</span>
-                  {p.label && <span className="ms-panel__label">{p.label}</span>}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Text overlay */}
-        <div className="ms-hero__overlay" />
-        <div className={`ms-hero__text ${animating ? 'ms-hero__text--exit' : 'ms-hero__text--enter'}`}>
-          <span className="ms-hero__badge">{slide.badge}</span>
-          <h1 className="ms-hero__headline">{slide.headline}</h1>
-          <p className="ms-hero__sub">{slide.sub}</p>
-          <Link to="/products" className="ms-hero__cta">{slide.cta}</Link>
-        </div>
-
-        {/* Navigation */}
-        <button className="ms-hero__nav ms-hero__nav--prev" onClick={prev} aria-label="السابق">
-          <ChevronRight size={28} />
-        </button>
-        <button className="ms-hero__nav ms-hero__nav--next" onClick={next} aria-label="التالي">
-          <ChevronLeft size={28} />
-        </button>
-
-        {/* Dots */}
-        <div className="ms-hero__dots" role="tablist">
-          {slides.map((_, i) => (
-            <button
-              key={i}
-              className={`ms-hero__dot ${i === current ? 'ms-hero__dot--active' : ''}`}
-              onClick={() => goTo(i)}
-              aria-label={`شريحة ${i + 1}`}
-              role="tab"
-            />
-          ))}
+        {/* Main Banner Image */}
+        <div className="ms-hero__banner">
+          <img 
+            src="/redesgin-imags/banner.webp" 
+            alt="ألعاب وألعاب - العب، اكتشف، اِبتكر"
+            className="ms-hero__banner-img"
+          />
+          
+          {/* Text overlay */}
+          <div className="ms-hero__overlay" />
+          <div className="ms-hero__content">
+            <span className="ms-hero__badge">وصل حديثاً</span>
+            <h1 className="ms-hero__headline">العب، اكتشف، اِبتكر</h1>
+            <p className="ms-hero__sub">أفضل الألعاب لكل سن وكل مناسبة</p>
+            <Link to="/products" className="ms-hero__cta">تسوق الآن</Link>
+          </div>
         </div>
 
         {/* WhatsApp float */}
