@@ -40,54 +40,26 @@ class OrderController {
             Response::error('Invalid payment method', 400);
         }
 
-        // Validate and calculate total with price verification
-        $totalAmount = 0;
+        // Validate item structure before passing to model
         $validatedItems = [];
 
-        try {
-            $this->orderModel->db->beginTransaction();
-
-            foreach ($data['items'] as $item) {
-                if (!isset($item['product_id']) || !isset($item['quantity'])) {
-                    $this->orderModel->db->rollBack();
-                    Response::error('Invalid item data', 400);
-                }
-
-                // Fetch current product data to prevent price tampering
-                $stmt = $this->orderModel->db->prepare(
-                    "SELECT id, name, price, stock, is_active FROM products WHERE id = ?"
-                );
-                $stmt->execute([$item['product_id']]);
-                $product = $stmt->fetch();
-
-                if (!$product) {
-                    $this->orderModel->db->rollBack();
-                    Response::error("Product not found: {$item['product_id']}", 404);
-                }
-
-                if (!$product['is_active']) {
-                    $this->orderModel->db->rollBack();
-                    Response::error("{$product['name']} is no longer available", 400);
-                }
-
-                if ($product['stock'] < $item['quantity']) {
-                    $this->orderModel->db->rollBack();
-                    Response::error("Insufficient stock for {$product['name']}", 400);
-                }
-
-                // Use server-side price, not client-provided price
-                $validatedItems[] = [
-                    'product_id' => $product['id'],
-                    'quantity' => $item['quantity'],
-                    'price' => $product['price']
-                ];
-
-                $totalAmount += $product['price'] * $item['quantity'];
+        foreach ($data['items'] as $item) {
+            if (!isset($item['product_id']) || !isset($item['quantity'])) {
+                Response::error('Invalid item data', 400);
             }
+            $validatedItems[] = [
+                'product_id' => (int)$item['product_id'],
+                'quantity' => (int)$item['quantity']
+            ];
+        }
 
+        try {
+            // Order::create() handles the full transaction atomically:
+            // locks products, validates stock, calculates total from DB prices,
+            // inserts order + items, and deducts stock
             $orderId = $this->orderModel->create(
                 $user['user_id'],
-                $totalAmount,
+                0, // ignored — model recalculates from DB prices
                 Validator::sanitizeString($data['shipping_address']),
                 $validatedItems,
                 $paymentMethod
@@ -97,16 +69,11 @@ class OrderController {
             $stmt = $this->orderModel->db->prepare("DELETE FROM cart WHERE user_id = ?");
             $stmt->execute([$user['user_id']]);
 
-            $this->orderModel->db->commit();
-
             $order = $this->orderModel->getById($orderId);
             Response::success($order, 'Order created successfully', 201);
         } catch (Exception $e) {
-            if ($this->orderModel->db->inTransaction()) {
-                $this->orderModel->db->rollBack();
-            }
             error_log('Order creation error: ' . $e->getMessage());
-            Response::error('Failed to create order', 500);
+            Response::error($e->getMessage(), 500);
         }
     }
 
@@ -119,5 +86,27 @@ class OrderController {
 
         $orders = $this->orderModel->getByUserId($userId);
         Response::success(['orders' => $orders]);
+    }
+
+    public function getById($orderId) {
+        $user = AuthMiddleware::authenticate();
+
+        try {
+            $order = $this->orderModel->getById($orderId);
+
+            if (!$order) {
+                Response::error('Order not found', 404);
+            }
+
+            // Verify user owns this order or is admin
+            if ($order['user_id'] != $user['user_id'] && $user['role'] !== 'admin') {
+                Response::error('Unauthorized', 403);
+            }
+
+            Response::success($order);
+        } catch (Exception $e) {
+            error_log('Order fetch error: ' . $e->getMessage());
+            Response::error('Failed to fetch order', 500);
+        }
     }
 }

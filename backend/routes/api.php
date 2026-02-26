@@ -134,8 +134,8 @@ $router->add('DELETE', '/upload', [$uploadController, 'deleteImage']);
 
 // Category routes (public)
 $router->add('GET', '/categories', [$categoryController, 'getAll']);
-$router->add('GET', '/categories/{id}', [$categoryController, 'getById']);
 $router->add('GET', '/categories/search', [$categoryController, 'search']);
+$router->add('GET', '/categories/{id}', [$categoryController, 'getById']);
 
 // Admin category routes
 $router->add('POST', '/admin/categories', [$categoryController, 'create']);
@@ -204,11 +204,11 @@ $router->add('GET', '/inventory/available-stock/{productId}', [$inventoryControl
 
 // Supplier routes
 $router->add('GET', '/admin/suppliers', [$supplierController, 'getAll']);
+$router->add('GET', '/admin/suppliers/search', [$supplierController, 'search']);
 $router->add('GET', '/admin/suppliers/{id}', [$supplierController, 'getById']);
 $router->add('POST', '/admin/suppliers', [$supplierController, 'create']);
 $router->add('PUT', '/admin/suppliers/{id}', [$supplierController, 'update']);
 $router->add('DELETE', '/admin/suppliers/{id}', [$supplierController, 'delete']);
-$router->add('GET', '/admin/suppliers/search', [$supplierController, 'search']);
 
 // Support routes
 $router->add('POST', '/support/tickets', [$supportController, 'createTicket']);

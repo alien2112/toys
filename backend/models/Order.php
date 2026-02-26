@@ -164,6 +164,22 @@ class Order {
             $stmt = $this->db->prepare("UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
             $stmt->execute([$newStatus, $orderId]);
 
+            // Restore stock when cancelling or refunding
+            if (in_array($newStatus, ['cancelled', 'refunded'])) {
+                $stmt = $this->db->prepare(
+                    "SELECT product_id, quantity FROM order_items WHERE order_id = ?"
+                );
+                $stmt->execute([$orderId]);
+                $orderItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                foreach ($orderItems as $item) {
+                    $restore = $this->db->prepare(
+                        "UPDATE products SET stock = stock + ? WHERE id = ?"
+                    );
+                    $restore->execute([$item['quantity'], $item['product_id']]);
+                }
+            }
+
             // Record status change in history if admin ID is provided
             if ($adminId) {
                 $stmt = $this->db->prepare(
@@ -183,10 +199,10 @@ class Order {
 
     public function getStatusHistory($orderId) {
         $stmt = $this->db->prepare(
-            "SELECT osh.*, u.name as admin_name 
-             FROM order_status_history osh 
-             LEFT JOIN users u ON osh.changed_by = u.id 
-             WHERE osh.order_id = ? 
+            "SELECT osh.*, CONCAT(u.first_name, ' ', u.last_name) as admin_name
+             FROM order_status_history osh
+             LEFT JOIN users u ON osh.changed_by = u.id
+             WHERE osh.order_id = ?
              ORDER BY osh.created_at DESC"
         );
         $stmt->execute([$orderId]);

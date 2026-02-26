@@ -140,7 +140,7 @@ class AdminController {
             Response::error('Status is required', 400);
         }
 
-        $validStatuses = ['pending', 'processed', 'shipping', 'delivered', 'cancelled'];
+        $validStatuses = ['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'];
         if (!in_array($data['status'], $validStatuses)) {
             Response::error('Invalid status value', 400);
         }

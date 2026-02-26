@@ -142,7 +142,8 @@ class InventoryController {
      * Expire old reservations (cleanup job)
      */
     public function expireReservations() {
-        // This should be called by a cron job
+        AuthMiddleware::requireAdmin();
+
         $this->inventoryModel->expireReservations();
         Response::success(null, 'Expired reservations cleaned up');
     }

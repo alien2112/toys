@@ -7,9 +7,40 @@ class UploadController {
     private $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
     private $maxFileSize = 5242880; // 5MB
     private $baseImagePath;
+    private $baseUrl;
 
     public function __construct() {
-        $this->baseImagePath = __DIR__ . '/../../images/';
+        // Use configurable upload path (supports both relative and absolute paths)
+        $uploadPath = getenv('UPLOAD_PATH');
+        if ($uploadPath) {
+            // If absolute path provided, use it directly
+            $this->baseImagePath = $uploadPath;
+        } else {
+            // Default to relative path from document root
+            $this->baseImagePath = $_SERVER['DOCUMENT_ROOT'] . '/../images/';
+            // Fallback to current directory structure if DOCUMENT_ROOT not available
+            if (!is_dir($this->baseImagePath)) {
+                $this->baseImagePath = __DIR__ . '/../../images/';
+            }
+        }
+
+        // Normalize path
+        $this->baseImagePath = rtrim($this->baseImagePath, '/') . '/';
+
+        // Set base URL for returning image URLs
+        $this->baseUrl = getenv('API_BASE_URL') ?: '';
+
+        // Create base directory if it doesn't exist
+        if (!is_dir($this->baseImagePath)) {
+            if (!@mkdir($this->baseImagePath, 0755, true)) {
+                error_log('CRITICAL: Failed to create base upload directory: ' . $this->baseImagePath);
+            }
+        }
+
+        // Check if writable
+        if (!is_writable($this->baseImagePath)) {
+            error_log('WARNING: Upload directory is not writable: ' . $this->baseImagePath);
+        }
     }
 
     public function uploadProductImage() {
@@ -117,8 +148,12 @@ class UploadController {
 
         // Additional security: check file extension
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
-        $fileExtension = strtolower(pathinfo($file['name'], PATHINFO_FILENAME));
-        
+        $fileExtension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+
+        if (!in_array($fileExtension, $allowedExtensions)) {
+            Response::error('Invalid file extension', 400);
+        }
+
         // Get desired filename from POST data or use original filename
         $desiredName = isset($_POST['filename']) && !empty($_POST['filename']) 
             ? $_POST['filename'] 
@@ -183,17 +218,23 @@ class UploadController {
 
     private function convertToWebP($sourcePath, $type, $filename) {
         $targetDir = $this->baseImagePath . $type . '/';
-        
+
         // Create directory if it doesn't exist (handles nested directories)
         if (!is_dir($targetDir)) {
-            if (!mkdir($targetDir, 0755, true)) {
-                throw new Exception('Failed to create upload directory. Please check permissions.');
+            if (!@mkdir($targetDir, 0755, true)) {
+                error_log('Failed to create directory: ' . $targetDir . ' - Error: ' . error_get_last()['message']);
+                throw new Exception('Failed to create upload directory. Please check permissions or contact server administrator.');
+            }
+            // Verify directory was actually created
+            if (!is_dir($targetDir)) {
+                throw new Exception('Upload directory could not be created: ' . $targetDir);
             }
         }
 
         // Check if directory is writable
         if (!is_writable($targetDir)) {
-            throw new Exception('Upload directory is not writable. Please check permissions.');
+            error_log('Directory not writable: ' . $targetDir . ' - Current permissions: ' . substr(sprintf('%o', fileperms($targetDir)), -4));
+            throw new Exception('Upload directory is not writable. Please check permissions (need 755 or 775).');
         }
 
         // Get original file extension
